@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 # RUN mkdir -p models && chown -R $USER:$USER models
 
 # Copy only the requirements file and install Python dependencies
-COPY requirements.txt .
+COPY assets/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
