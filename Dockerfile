@@ -25,4 +25,4 @@ COPY . .
 # Define the command to run your application
 CMD ["bash"]
 
-CMD ["python", "actor_critic_method.py"]
+CMD ["python", "src/actor_critic_method.py"]

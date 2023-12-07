@@ -13,7 +13,7 @@ números pseudoaleatórios toda vez que executar o seu código."""
 # Configuration parameters for the whole setup
 seed = 42
 gamma = 0.99  # Discount factor for past rewards
-max_steps_per_episode = 10000
+max_steps_per_episode = 100000
 env = gym.make("CartPole-v0")  # Create the environment
 env.seed(seed)
 eps = np.finfo(np.float32).eps.item()  # Smallest number such that 1.0 + eps != 1.0
@@ -49,10 +49,9 @@ except:
     print("Creating new model...")
 
 # Recompila o modelo
-optimizer = keras.optimizers.Adam(learning_rate=0.01)
-model.compile(optimizer=optimizer, loss=[None, "mean_squared_error"])
+optimizer = keras.optimizers.Adam(learning_rate=0.01)  # Otimizador usado para treinar o modelo
+model.compile(optimizer=optimizer, loss=[None, "mean_squared_error"])  # we need to compile the model before training it, otherwise it won't work
 
-optimizer = keras.optimizers.Adam(learning_rate=0.01)
 huber_loss = keras.losses.Huber()  # Usado para calcular a perda
 action_probs_history = []
 critic_value_history = []
@@ -64,9 +63,11 @@ while True:  # Run until solved
     # Reseta o ambiente
     state = env.reset()
     episode_reward = 0
+    done = False
 
     with tf.GradientTape() as tape:  # Grava as operações executadas dentro do contexto
-        for timestep in range(1, max_steps_per_episode):
+        # for timestep in range(1, max_steps_per_episode):
+        while not done:
             # env.render(mode="human")
             # Renderiza o ambiente
 
@@ -76,7 +77,7 @@ while True:  # Run until solved
 
             # Predict action probabilities and estimated future rewards
             # from environment state
-            action_probs, critic_value = model(state)
+            action_probs, critic_value = model(state)  # Pega a probabilidade de cada ação e o valor estimado de recompensa futura
             critic_value_history.append(critic_value[0, 0])
 
             # Sample action from action probability distribution
@@ -145,11 +146,11 @@ while True:  # Run until solved
 
     # Log details
     episode_count += 1
-    if episode_count % 10 == 0:
-        template = "running reward: {:.2f} at episode {}"
-        print(template.format(running_reward, episode_count), flush=True)
+    # if episode_count % 10 == 0:
+    template = "running reward: {:.2f} at episode {}"
+    print(template.format(running_reward, episode_count), flush=True)
 
-    if running_reward > 150:  # Condition to consider the task solved
+    if running_reward > 190:  # Condition to consider the task solved
         print(f"Solved at episode {episode_count}!", flush=True)
         model.save("models")
         break
